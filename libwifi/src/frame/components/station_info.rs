@@ -25,7 +25,7 @@ pub struct StationInfo {
     pub power_constraint: Option<u8>,
     pub ht_capabilities: Option<HTCapabilities>,
     pub ht_information: Option<HTInformation>,
-    pub vht_capabilities: Option<Vec<u8>>,
+    pub vht_capabilities: Option<VHTCapabilities>,
     pub rsn_information: Option<RsnInformation>,
     pub wpa_info: Option<WpaInformation>,
     pub wps_info: Option<WpsInformation>,
@@ -124,8 +124,8 @@ impl StationInfo {
         // Encode VHT Capabilities (if present) - Tag Number: 191
         if let Some(vht_capabilities) = &self.vht_capabilities {
             bytes.push(191); // VHT Capabilities tag number
-            bytes.push(vht_capabilities.len() as u8); // Length of VHT Capabilities
-            bytes.extend(vht_capabilities);
+            bytes.push(vht_capabilities.data.len() as u8); // Length of VHT Capabilities
+            bytes.extend(vht_capabilities.data.to_vec());
         }
 
         // Encode RSN Information (if present) - Tag Number: 48
@@ -807,6 +807,15 @@ impl HTInformation {
         data.extend(self.other_data.clone());
         data
     }
+}
+
+#[derive(Debug, Clone)]
+pub struct VHTCapabilities {
+    pub maximum_mpdu_length: u8,
+    pub rx_ldpc: bool,
+    pub short_gi_80mhz: bool,
+    pub short_gi_160mhz: bool,
+    pub data: Vec<u8>, // TODO
 }
 
 #[derive(Debug, Clone)]
