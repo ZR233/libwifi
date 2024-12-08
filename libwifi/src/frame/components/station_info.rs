@@ -14,7 +14,6 @@ use std::fmt;
 ///
 /// Since we cannot handle all all those elements, the bytes of all unhandled elements will
 /// be saved in the `data` field under the respectiv element id.
-
 pub struct StationInfo {
     pub supported_rates: Vec<SupportedRate>,
     pub extended_supported_rates: Option<Vec<SupportedRate>>,
@@ -24,7 +23,7 @@ pub struct StationInfo {
     pub tim: Option<Vec<u8>>,
     pub country_info: Option<Vec<u8>>,
     pub power_constraint: Option<u8>,
-    pub ht_capabilities: Option<Vec<u8>>,
+    pub ht_capabilities: Option<HTCapabilities>,
     pub ht_information: Option<HTInformation>,
     pub vht_capabilities: Option<Vec<u8>>,
     pub rsn_information: Option<RsnInformation>,
@@ -110,8 +109,8 @@ impl StationInfo {
         // Encode HT Capabilities (if present) - Tag Number: 45
         if let Some(ht_capabilities) = &self.ht_capabilities {
             bytes.push(45); // HT Capabilities tag number
-            bytes.push(ht_capabilities.len() as u8); // Length of HT Capabilities
-            bytes.extend(ht_capabilities);
+            bytes.push(ht_capabilities.data.len() as u8); // Length of HT Capabilities
+            bytes.extend(ht_capabilities.data.clone().into_iter());
         }
 
         // Encode HT Information (if present) - Tag Number: 61
@@ -161,7 +160,7 @@ impl StationInfo {
             bytes.push(ext_caps.len() as u8);
             bytes.extend(ext_caps);
         }
-        
+
         if let Some(chan_switch) = &self.channel_switch {
             let encoded = chan_switch.encode();
             bytes.push(37);
@@ -781,10 +780,23 @@ impl RsnCipherSuite {
         }
     }
 }
+#[derive(Debug, Clone)]
+pub struct HTCapabilities {
+    pub supported_channel_width: bool,
+    pub data: Vec<u8>, // TODO
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SecondaryChannelOffset {
+    Below,
+    Above,
+}
 
 #[derive(Debug, Clone)]
 pub struct HTInformation {
     pub primary_channel: u8,
+    pub secondary_channel_offset: Option<SecondaryChannelOffset>,
+    pub supported_channel_width: bool,
     pub other_data: Vec<u8>, // TODO
 }
 

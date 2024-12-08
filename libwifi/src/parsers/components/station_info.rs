@@ -4,15 +4,12 @@ use nom::number::complete::u8 as get_u8;
 use nom::sequence::tuple;
 use nom::IResult;
 
-use crate::frame::{
-    components::{
-        AudioDevices, Cameras, Category, ChannelSwitchAnnouncment, ChannelSwitchMode, Computers,
-        Displays, DockingDevices, GamingDevices, HTInformation, InputDevices, MultimediaDevices,
-        NetworkInfrastructure, PrintersEtAl, RsnAkmSuite, RsnCipherSuite, RsnInformation,
-        StationInfo, Storage, SupportedRate, Telephone, VendorSpecificInfo, WpaAkmSuite,
-        WpaCipherSuite, WpaInformation, WpsInformation, WpsSetupState,
-    },
-    Data,
+use crate::frame::components::{
+    AudioDevices, Cameras, Category, ChannelSwitchAnnouncment, ChannelSwitchMode, Computers,
+    Displays, DockingDevices, GamingDevices, HTCapabilities, HTInformation, InputDevices,
+    MultimediaDevices, NetworkInfrastructure, PrintersEtAl, RsnAkmSuite, RsnCipherSuite,
+    RsnInformation, SecondaryChannelOffset, StationInfo, Storage, SupportedRate, Telephone,
+    VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite, WpaInformation, WpsInformation, WpsSetupState,
 };
 
 /// Parse variable length and variable field information.
@@ -48,7 +45,7 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                 7 => station_info.country_info = Some(data.to_vec()),
                 32 => station_info.power_constraint = Some(data[0]),
                 37 => station_info.channel_switch = parse_channel_switch(data),
-                45 => station_info.ht_capabilities = Some(data.to_vec()),
+                45 => station_info.ht_capabilities = parse_ht_capabilities(data),
                 48 => {
                     if let Ok(rsn_info) = parse_rsn_information(data) {
                         station_info.rsn_information = Some(rsn_info)
@@ -154,13 +151,23 @@ fn parse_wpa_information(data: &[u8]) -> Result<WpaInformation, &'static str> {
 }
 
 fn parse_ht_information(data: &[u8]) -> Result<HTInformation, &'static str> {
-    if data.is_empty() {
-        return Err("WPA Information data too short");
+    if data.len() < 2 {
+        return Err("HT Information data too short");
     }
+
+    let secondary_channel_offset_raw = data[1] & 0b11;
+
+    let supported_channel_width = (data[1] & 0b100) > 0;
 
     Ok(HTInformation {
         primary_channel: data[0],
         other_data: data[1..].to_vec(),
+        secondary_channel_offset: match secondary_channel_offset_raw {
+            1 => Some(SecondaryChannelOffset::Above),
+            3 => Some(SecondaryChannelOffset::Below),
+            _ => None,
+        },
+        supported_channel_width,
     })
 }
 
@@ -454,7 +461,18 @@ pub fn parse_rsn_information(data: &[u8]) -> Result<RsnInformation, &'static str
     }
 }
 
+pub fn parse_ht_capabilities(data: &[u8]) -> Option<HTCapabilities> {
+    if data.len() < 1 {
+        return None;
+    }
 
+    let supported_channel_width = (data[0] & (1 << 1)) != 0;
+
+    Some(HTCapabilities {
+        supported_channel_width,
+        data: data.to_vec(),
+    })
+}
 
 pub fn parse_channel_switch(data: &[u8]) -> Option<ChannelSwitchAnnouncment> {
     if data.len() < 3 {
