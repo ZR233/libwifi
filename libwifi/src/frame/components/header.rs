@@ -194,14 +194,19 @@ impl DataHeader {
 impl Addresses for DataHeader {
     /// Return the mac address of the sender
     fn src(&self) -> Option<&MacAddress> {
-        if self.frame_control.to_ds() && self.frame_control.from_ds() {
-            // This should be safe.
-            // If both to_ds and from_ds are true, we always read the forth address.
-            self.address_4.as_ref()
-        } else if self.frame_control.to_ds() {
+        // if self.frame_control.to_ds() && self.frame_control.from_ds() {
+        //     // This should be safe.
+        //     // If both to_ds and from_ds are true, we always read the forth address.
+        //     self.address_4.as_ref()
+        // } else if self.frame_control.to_ds() {
+        //     Some(&self.address_3)
+        // } else if self.frame_control.from_ds() {
+        //     Some(&self.address_1)
+        // } else {
+        //     Some(&self.address_2)
+        // }
+        if self.frame_control.from_ds() {
             Some(&self.address_3)
-        } else if self.frame_control.from_ds() {
-            Some(&self.address_1)
         } else {
             Some(&self.address_2)
         }
