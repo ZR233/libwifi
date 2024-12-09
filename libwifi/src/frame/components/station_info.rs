@@ -786,7 +786,7 @@ pub struct HTCapabilities {
     pub data: Vec<u8>, // TODO
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SecondaryChannel {
     None,
     Below,
