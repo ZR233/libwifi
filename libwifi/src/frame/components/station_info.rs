@@ -787,7 +787,8 @@ pub struct HTCapabilities {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SecondaryChannelOffset {
+pub enum SecondaryChannel {
+    None,
     Below,
     Above,
 }
@@ -795,7 +796,7 @@ pub enum SecondaryChannelOffset {
 #[derive(Debug, Clone)]
 pub struct HTInformation {
     pub primary_channel: u8,
-    pub secondary_channel_offset: Option<SecondaryChannelOffset>,
+    pub secondary_channel_offset: SecondaryChannel,
     pub supported_channel_width: bool,
     pub other_data: Vec<u8>, // TODO
 }

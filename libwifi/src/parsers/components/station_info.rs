@@ -8,7 +8,7 @@ use crate::frame::components::{
     AudioDevices, Cameras, Category, ChannelSwitchAnnouncment, ChannelSwitchMode, Computers,
     Displays, DockingDevices, GamingDevices, HTCapabilities, HTInformation, InputDevices,
     MultimediaDevices, NetworkInfrastructure, PrintersEtAl, RsnAkmSuite, RsnCipherSuite,
-    RsnInformation, SecondaryChannelOffset, StationInfo, Storage, SupportedRate, Telephone,
+    RsnInformation, SecondaryChannel, StationInfo, Storage, SupportedRate, Telephone,
     VHTCapabilities, VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite, WpaInformation,
     WpsInformation, WpsSetupState,
 };
@@ -164,16 +164,16 @@ fn parse_ht_information(data: &[u8]) -> Result<HTInformation, &'static str> {
         primary_channel: data[0],
         other_data: data[1..].to_vec(),
         secondary_channel_offset: match secondary_channel_offset_raw {
-            1 => Some(SecondaryChannelOffset::Above),
-            3 => Some(SecondaryChannelOffset::Below),
-            _ => None,
+            1 => SecondaryChannel::Above,
+            3 => SecondaryChannel::Below,
+            _ => SecondaryChannel::None,
         },
         supported_channel_width,
     })
 }
 
 fn parse_vht_capabilities(data: &[u8]) -> Option<VHTCapabilities> {
-    if data.len() < 1 {
+    if data.is_empty() {
         return None;
     }
 

@@ -12,7 +12,7 @@ pub use station_info::{
     AudioDevices, Cameras, Category, ChannelSwitchAnnouncment, ChannelSwitchMode, Computers,
     Displays, DockingDevices, GamingDevices, HTCapabilities, HTInformation, InputDevices,
     MultimediaDevices, NetworkInfrastructure, PrintersEtAl, RsnAkmSuite, RsnCipherSuite,
-    RsnInformation, SecondaryChannelOffset, StationInfo, Storage, SupportedRate, Telephone,
+    RsnInformation, SecondaryChannel, StationInfo, Storage, SupportedRate, Telephone,
     VHTCapabilities, VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite, WpaInformation,
     WpsInformation, WpsSetupState,
 };
