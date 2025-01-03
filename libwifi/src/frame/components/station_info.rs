@@ -32,6 +32,7 @@ pub struct StationInfo {
     pub vendor_specific: Vec<VendorSpecificInfo>,
     pub extended_capabilities: Option<Vec<u8>>,
     pub channel_switch: Option<ChannelSwitchAnnouncment>,
+    pub he_capabilities: Option<HECapabilities>,
     pub data: Vec<(u8, Vec<u8>)>,
 }
 
@@ -783,6 +784,11 @@ impl RsnCipherSuite {
 #[derive(Debug, Clone)]
 pub struct HTCapabilities {
     pub supported_channel_width: bool,
+    pub data: Vec<u8>, // TODO
+}
+
+#[derive(Debug, Clone)]
+pub struct HECapabilities {
     pub data: Vec<u8>, // TODO
 }
 

@@ -6,10 +6,10 @@ use nom::IResult;
 
 use crate::frame::components::{
     AudioDevices, Cameras, Category, ChannelSwitchAnnouncment, ChannelSwitchMode, Computers,
-    Displays, DockingDevices, GamingDevices, HTCapabilities, HTInformation, InputDevices,
-    MultimediaDevices, NetworkInfrastructure, PrintersEtAl, RsnAkmSuite, RsnCipherSuite,
-    RsnInformation, SecondaryChannel, StationInfo, Storage, SupportedRate, Telephone,
-    VHTCapabilities, VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite, WpaInformation,
+    Displays, DockingDevices, GamingDevices, HECapabilities, HTCapabilities, HTInformation,
+    InputDevices, MultimediaDevices, NetworkInfrastructure, PrintersEtAl, RsnAkmSuite,
+    RsnCipherSuite, RsnInformation, SecondaryChannel, StationInfo, Storage, SupportedRate,
+    Telephone, VHTCapabilities, VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite, WpaInformation,
     WpsInformation, WpsSetupState,
 };
 
@@ -83,6 +83,19 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                                 data: vendor_data,
                             };
                             station_info.vendor_specific.push(vendor_specific_info);
+                        }
+                    }
+                }
+
+                0xFF => {
+                    let ext_element_id = data[0];
+                    match ext_element_id {
+                        35 => {
+                            station_info.he_capabilities = Some(HECapabilities {
+                                data: data.to_vec(),
+                            });
+                        }
+                        _ => { // TODO: implement parsing for other extended element ids
                         }
                     }
                 }

@@ -1,7 +1,5 @@
 use nom::bytes::complete::take;
-use nom::error::Error;
-use nom::sequence::tuple;
-use nom::{bits, IResult};
+use nom::IResult;
 
 use crate::frame::components::SequenceControl;
 

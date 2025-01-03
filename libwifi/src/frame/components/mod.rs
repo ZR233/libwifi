@@ -10,9 +10,9 @@ pub use mac_address::*;
 pub use sequence_control::SequenceControl;
 pub use station_info::{
     AudioDevices, Cameras, Category, ChannelSwitchAnnouncment, ChannelSwitchMode, Computers,
-    Displays, DockingDevices, GamingDevices, HTCapabilities, HTInformation, InputDevices,
-    MultimediaDevices, NetworkInfrastructure, PrintersEtAl, RsnAkmSuite, RsnCipherSuite,
-    RsnInformation, SecondaryChannel, StationInfo, Storage, SupportedRate, Telephone,
-    VHTCapabilities, VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite, WpaInformation,
+    Displays, DockingDevices, GamingDevices, HECapabilities, HTCapabilities, HTInformation,
+    InputDevices, MultimediaDevices, NetworkInfrastructure, PrintersEtAl, RsnAkmSuite,
+    RsnCipherSuite, RsnInformation, SecondaryChannel, StationInfo, Storage, SupportedRate,
+    Telephone, VHTCapabilities, VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite, WpaInformation,
     WpsInformation, WpsSetupState,
 };

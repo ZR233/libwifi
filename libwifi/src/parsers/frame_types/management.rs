@@ -1,4 +1,3 @@
-use components::StationInfo;
 use nom::bytes::complete::take;
 use nom::number::complete::{le_u16, le_u64, le_u8};
 
@@ -173,7 +172,7 @@ pub fn parse_reassociation_response(
         capability_info,
         status_code,
         association_id,
-        station_info
+        station_info,
     }))
 }
 
