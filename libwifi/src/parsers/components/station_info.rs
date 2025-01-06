@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+use encoding::{all::GBK, DecoderTrap, Encoding};
 use nom::bytes::complete::take;
 use nom::number::complete::u8 as get_u8;
 use nom::sequence::tuple;
@@ -36,7 +37,10 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
         if !data.is_empty() {
             match element_id {
                 0 => {
-                    let ssid = String::from_utf8_lossy(data).to_string();
+                    if length == 0 {
+                        continue;
+                    }
+                    let ssid = parse_ssid(data);
                     station_info.ssid = Some(ssid);
                     station_info.ssid_length = Some(length as usize);
                 }
@@ -111,6 +115,16 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
     }
 
     Ok((input, station_info))
+}
+
+fn parse_ssid(data: &[u8]) -> String {
+    if let Ok(ssid) = String::from_utf8(data.to_vec()) {
+        ssid
+    } else if let Ok(ssid) = GBK.decode(data, DecoderTrap::Strict) {
+        ssid
+    } else {
+        "".to_string()
+    }
 }
 
 fn parse_wpa_information(data: &[u8]) -> Result<WpaInformation, &'static str> {

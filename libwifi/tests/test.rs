@@ -18,7 +18,18 @@ fn test_wifi6() {
         handle_packet(packet).unwrap();
     }
 }
+#[test]
+fn test_wifi_ssid() {
+    let file_data = include_bytes!("../../data/wifi_ssid.pcap");
+    let mut tmpfile = NamedTempFile::new().unwrap();
+    tmpfile.write_all(file_data).unwrap();
 
+    let mut cap = Capture::from_file(tmpfile.path()).unwrap();
+
+    while let Ok(packet) = cap.next_packet() {
+        handle_packet(packet).unwrap();
+    }
+}
 pub fn handle_packet(packet: Packet) -> Result<()> {
     // At first, we look at the
     let radiotap = match Radiotap::from_bytes(packet.data) {

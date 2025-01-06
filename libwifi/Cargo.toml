@@ -22,6 +22,7 @@ strum_macros = "0.26"
 enum_dispatch = "0.3"
 libwifi_macros = { version = "0.0.2", path = "../libwifi_macros" }
 crc = "3.0.1"
+encoding = "0.2"
 
 [dev-dependencies]
 criterion = "0.5"
