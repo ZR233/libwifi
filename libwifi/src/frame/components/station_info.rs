@@ -658,6 +658,8 @@ pub enum WpaCipherSuite {
     Tkip,
     #[default]
     Ccmp,
+    Gcmp,
+    Gmac,
     Unknown(Vec<u8>),
 }
 
@@ -668,6 +670,8 @@ impl WpaCipherSuite {
             WpaCipherSuite::Wep104 => vec![0x00, 0x50, 0xF2, 0x05],
             WpaCipherSuite::Tkip => vec![0x00, 0x50, 0xF2, 0x02],
             WpaCipherSuite::Ccmp => vec![0x00, 0x50, 0xF2, 0x04],
+            WpaCipherSuite::Gcmp => vec![0x00, 0x50, 0xF2, 0x09],
+            WpaCipherSuite::Gmac => vec![0x00, 0x50, 0xF2, 0x0c],
             WpaCipherSuite::Unknown(data) => data.clone(),
         }
     }
@@ -760,6 +764,7 @@ pub enum RsnAkmSuite {
     PSKFT,
     EAPFT,
     SAE,
+    OWE,
     SUITEBEAP256,
     PSK256,
     EAP256,
@@ -776,6 +781,7 @@ impl RsnAkmSuite {
             RsnAkmSuite::EAP256 => vec![0x00, 0x0F, 0xAC, 0x05],
             RsnAkmSuite::PSK256 => vec![0x00, 0x0F, 0xAC, 0x06],
             RsnAkmSuite::SAE => vec![0x00, 0x0F, 0xAC, 0x08],
+            RsnAkmSuite::OWE => vec![0x00, 0x0F, 0xAC, 0x12],
             RsnAkmSuite::SUITEBEAP256 => vec![0x00, 0x0F, 0xAC, 0x0b],
             RsnAkmSuite::Unknown(data) => data.clone(),
         }
@@ -791,6 +797,7 @@ pub enum RsnCipherSuite {
     #[default]
     CCMP,
     WEP104,
+    WPA2,
     Unknown(Vec<u8>),
 }
 
@@ -803,6 +810,7 @@ impl RsnCipherSuite {
             RsnCipherSuite::WRAP => vec![0x00, 0x0F, 0xAC, 0x03],
             RsnCipherSuite::CCMP => vec![0x00, 0x0F, 0xAC, 0x04],
             RsnCipherSuite::WEP104 => vec![0x00, 0x0F, 0xAC, 0x05],
+            RsnCipherSuite::WPA2 => vec![0x04, 0x09, 0x0c],
             RsnCipherSuite::Unknown(data) => data.clone(),
         }
     }

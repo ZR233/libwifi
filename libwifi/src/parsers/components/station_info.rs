@@ -672,6 +672,8 @@ fn parse_cipher_suite(data: &[u8]) -> WpaCipherSuite {
         [0x00, 0x50, 0xF2, 0x05] => WpaCipherSuite::Wep104,
         [0x00, 0x50, 0xF2, 0x02] => WpaCipherSuite::Tkip,
         [0x00, 0x50, 0xF2, 0x04] => WpaCipherSuite::Ccmp,
+        [0x00, 0x50, 0xF2, 0x09] => WpaCipherSuite::Gcmp,
+        [0x00, 0x50, 0xF2, 0x0c] => WpaCipherSuite::Gmac,
         _ => WpaCipherSuite::Unknown(data.to_vec()),
     }
 }
@@ -692,6 +694,7 @@ fn parse_group_cipher_suite(data: &[u8]) -> RsnCipherSuite {
         [0x00, 0x0F, 0xAC, 0x03] => RsnCipherSuite::WRAP,
         [0x00, 0x0F, 0xAC, 0x04] => RsnCipherSuite::CCMP,
         [0x00, 0x0F, 0xAC, 0x05] => RsnCipherSuite::WEP104,
+        [0x04, 0x09, 0x0c] => RsnCipherSuite::WPA2,
         _ => RsnCipherSuite::Unknown(data.to_vec()),
     }
 }
@@ -717,6 +720,7 @@ fn parse_akm_suite(data: &[u8]) -> RsnAkmSuite {
         [0x00, 0x0F, 0xAC, 0x05] => RsnAkmSuite::EAP256,
         [0x00, 0x0F, 0xAC, 0x06] => RsnAkmSuite::PSK256,
         [0x00, 0x0F, 0xAC, 0x08] => RsnAkmSuite::SAE,
+        [0x00, 0x0F, 0xAC, 0x12] => RsnAkmSuite::OWE,
         [0x00, 0x0F, 0xAC, 0x0b] => RsnAkmSuite::SUITEBEAP256,
         _ => RsnAkmSuite::Unknown(data.to_vec()),
     }
