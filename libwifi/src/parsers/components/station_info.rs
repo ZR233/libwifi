@@ -38,11 +38,12 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
         if !data.is_empty() {
             match element_id {
                 0 => {
-                    let ssid = String::from_utf8_lossy(data).to_string();
+                    let ssid_raw = data[..length as usize].to_vec();
+                    let ssid = parse_ssid(&ssid_raw);
                     station_info.ssid = Some(ssid);
                     station_info.ssid_length = Some(length as usize);
                     // if ssid is not utf8, can use the raw data.
-                    station_info.ssid_raw = Some(data[..length as usize].to_vec());
+                    station_info.ssid_raw = Some(ssid_raw);
                 }
                 1 => station_info.supported_rates = parse_supported_rates(data),
                 3 => station_info.ds_parameter_set = Some(data[0]),
@@ -131,6 +132,17 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
     }
 
     Ok((input, station_info))
+}
+
+fn parse_ssid(data: &[u8]) -> String {
+    use encoding::{DecoderTrap, Encoding, all::GBK};
+    if let Ok(ssid) = String::from_utf8(data.to_vec()) {
+        ssid
+    } else if let Ok(ssid) = GBK.decode(data, DecoderTrap::Strict) {
+        ssid
+    } else {
+        String::from_utf8_lossy(data).to_string()
+    }
 }
 
 fn parse_wpa_information(data: &[u8]) -> Result<WpaInformation, &'static str> {
